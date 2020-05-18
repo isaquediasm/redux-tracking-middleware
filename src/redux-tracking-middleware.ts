@@ -12,21 +12,16 @@ const pipe = (...functions: Array<Function>) => (...value: Array<any>) => {
   }, value)
 }
 
-function track(event: Object) {
-  if (!event) return
-
-  console.log('##event', event)
-}
-
+/**
+ *
+ *
+ * @param {Array<string>} terms
+ * @returns
+ */
 function validateByTerm(terms: Array<string>) {
   return (action: Action) => {
     return !terms.some(single => action.type.includes(single)) && action
   }
-}
-
-function checkValidateFn(fn: Array<Function> | Function = noop) {
-  const validateFn = Array.isArray(fn) ? fn.filter(Boolean) : [fn]
-  return validateFn
 }
 
 /**
@@ -37,13 +32,15 @@ function callHandlers(handlers: Handlers) {
   const keys = Object.keys(handlers)
 
   return (action: Action) => {
+    if (!keys.length) return action
+
     const matchedKey = keys.find(pattern => {
       let regex = new RegExp(pattern, 'gi')
 
       return action.type.match(regex)
     })
 
-    return matchedKey ? handlers?.[matchedKey](action) : false
+    return matchedKey ? handlers?.[matchedKey](action) : action
   }
 }
 
@@ -58,7 +55,7 @@ export function trackingMiddleware(
     // are we allowed to track this action?
     if (!action.disableTracking) next(action)
 
-    const { handlers, filter = filterRules } = config
+    const { handlers = {}, filter = filterRules } = config
 
     const event = pipe(validateByTerm(filter), callHandlers(handlers))(action)
 

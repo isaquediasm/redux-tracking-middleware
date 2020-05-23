@@ -28,16 +28,16 @@ yarn add redux-tracking-middleware
 Import the middleware, write your configurations and include it in `applyMiddleware` when creating a Redux Store:
 
 ```js
-import trackingMiddleware, { createTracking } from 'redux-tracking-middleware'
+import trackingMiddleware from 'redux-tracking-middleware'
 import mixpanel from 'mixpanel'
 
-const defaultTracking = createTracking({
+const defaultTracking = {
   track: action => {
     mixpanel.track(action.type, action.payload)
   }
-})
+}
 
-const tracking = trackingMiddleware([defaultTrack])
+const tracking = trackingMiddleware(defaultTrack)
 const store = createStore(rootReducer, applyMiddleware(tracking))
 ```
 
@@ -46,22 +46,22 @@ const store = createStore(rootReducer, applyMiddleware(tracking))
 The property `pattern` of the options object, which accepts a regex or a function allows you to filter in or out certain action types based on your own rules.
 
 ```js
-const defaultTrack = createTracking({
+const defaultTrack = {
   pattern: action => !action.type.includes('FAILED'), // all actions except failed
   track: action => {
     mixpanel.track(action.type, action.payload)
   }
-})
+}
 ```
 
 ```js
-const defaultTracking = createTracking({
+const defaultTracking = {
   // all actions where allowTracking is true,
   pattern: action => action.allowTracking === true,
   track: action => {
     mixpanel.track(action.type, action.payload)
   }
-})
+}
 ```
 
 ## Customising event types
@@ -85,7 +85,7 @@ Consider the following actions, where you register an user, and in this scenario
 In that case , you'd need to specify these rules using the property `customise` of the options object, which accepts an array of objects containing an RegEx pattern or a function to match the action and a `onTrack` callback function.
 
 ```js
-const userTracking = createTracking({
+const userTracking = {
   pattern: `USER_REGISTERED`,
   transform: action => {
     return {
@@ -98,9 +98,9 @@ const userTracking = createTracking({
     Mixpanel.identify(action.payload.userId)
     Mixpanel.track(action.type, action.payload)
   }
-})
+}
 
-const tracking = trackingMiddleware([userTracking])
+const tracking = trackingMiddleware(userTracking)
 const store = createStore(rootReducer, applyMiddleware(tracking))
 ```
 
@@ -109,7 +109,7 @@ const store = createStore(rootReducer, applyMiddleware(tracking))
 The tracking middleware works as a left-to-right pipe, which means that every function will be executed and its output will serve as input to the next function. Nevertheless, the pipe will be interrupted whenever a `track` function is invoked.
 
 ```js
-const userTracking = createTracking({
+const userTracking = {
   pattern: `USER_LOGGED_IN`,
   transform: action => {
     return {
@@ -117,14 +117,14 @@ const userTracking = createTracking({
       type: 'User Logged In' // transforms the action type and pass it along
     }
   }
-})
+}
 
-const defaultTracking = createTracking({
+const defaultTracking = {
   // pipe will be interrupted here
   track: action => {
     Mixpanel.track(action.type, action.payload)
   }
-})
+}
 
 const tracking = trackingMiddleware([userTracking, defaultTracking])
 const store = createStore(rootReducer, applyMiddleware(tracking))
@@ -133,20 +133,20 @@ const store = createStore(rootReducer, applyMiddleware(tracking))
 When you include a `track` function before the last method in the pipe, it would get interrupted in the same way.
 
 ```js
-const apiErrorTracking = createTracking({
+const apiErrorTracking = {
   pattern: action => action.type.includes('FAILED'), // catches all failed actions
   // pipe will be interrupted here
   track: action => {
     Sentry.captureException(action.error)
   }
-})
+}
 
-const defaultTracking = createTracking({
+const defaultTracking = {
   // this won't get executed
   track: action => {
     Mixpanel.track(action.type, action.payload)
   }
-})
+}
 
 const tracking = trackingMiddleware([userTracking, defaultTracking])
 const store = createStore(rootReducer, applyMiddleware(tracking))
@@ -157,11 +157,11 @@ const store = createStore(rootReducer, applyMiddleware(tracking))
 The Tracking Middleware can be even more powerful when used to Redux Thunk.
 
 ```js
-import trackingMiddleware, { createTracking } from 'redux-tracking-middleware'
+import trackingMiddleware from 'redux-tracking-middleware'
 import thunk from 'redux-thunk'
 
 // catches the user information and add it to every action
-const getUser = createTracking({
+const getUser = {
   transform: (action, getState) => {
     const user = getState().userReducer.user
 
@@ -173,13 +173,13 @@ const getUser = createTracking({
       }
     }
   }
-})
+}
 
-const defaultTracking = createTracking({
+const defaultTracking = {
   track: action => {
     Mixpanel.track(action.type, action.payload)
   }
-})
+}
 
 const tracking = trackingMiddleware([getUser, defaultTracking])
 const store = createStore(rootReducer, applyMiddleware(thunk, tracking))

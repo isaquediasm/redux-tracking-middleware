@@ -47,7 +47,7 @@ The property `pattern` of the options object, which accepts a regex or a functio
 
 ```js
 const defaultTrack = createTracking({
-  pattern: `!(.*)_FAILED`, // all actions except failed
+  pattern: action => !action.type.includes('FAILED'), // all actions except failed
   track: action => {
     mixpanel.track(action.type, action.payload)
   }
@@ -134,7 +134,7 @@ When you include a `track` function before the last method in the pipe, it would
 
 ```js
 const apiErrorTracking = createTracking({
-  pattern: `(.*)_FAILED`, // catches all failed actions
+  pattern: action => action.type.includes('FAILED'), // catches all failed actions
   // pipe will be interrupted here
   track: action => {
     Sentry.captureException(action.error)

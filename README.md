@@ -10,7 +10,7 @@ Redux Tracking Middleware uses the power of middlewares to enable a simple and r
   - [Combining multiple trackers](#combining-multiple-trackers)
   - [Usage with Redux Thunk](#usage-with-redux-thunk)
   - [API Specification](#api-specification)
-    - [createTracking(options)](#createtrackingoptions)
+    - [Settings object](#settings-object)
     - [trackingMiddleware(trackers)](#trackingmiddlewaretrackers)
   - [Versioning](#versioning)
   - [Contributing](#contributing)
@@ -189,7 +189,7 @@ const store = createStore(rootReducer, applyMiddleware(thunk, tracking))
 
 ## API Specification
 
-### createTracking(options)
+### Settings object
 
 | Property  | Description                                                             | Type              | Default  |
 | --------- | ----------------------------------------------------------------------- | ----------------- | -------- |

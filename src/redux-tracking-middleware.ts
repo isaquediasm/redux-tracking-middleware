@@ -1,16 +1,11 @@
-import { Action, Handlers } from './interfaces'
+import { Action, Handlers, Tracker } from './interfaces'
 // Import here Polyfills if needed. Recommended core-js (npm i -D core-js)
 // import "core-js/fn/array.find"
 // ...
 
-const noop = (val: Array<any>) => val
-const pipe = (...functions: Array<Function>) => (...value: Array<any>) => {
-  return functions.reduce((currentValue, currentFunction) => {
-    return currentFunction(
-      ...(Array.isArray(currentValue) ? currentValue : [currentValue])
-    )
-  }, value)
-}
+export const noop = (val: any) => val
+
+const pipe = (...fns: Array<any>) => (x: any) => fns.reduce((v, f) => f(v), x)
 
 /**
  *
@@ -47,22 +42,30 @@ function callHandlers(handlers: Handlers) {
 // should filter out action types containing these strigns
 const filterRules = ['LOADING', 'FAILURE']
 
-export function trackingMiddleware(
-  onTrack: Function = () => noop,
-  config: any = {}
-) {
+export function createTracking(options: any) {
+  return options
+}
+
+function combine(trackers: Array<any>) {
+  const mainTracker = trackers.find(item => !!item.track)
+
+  return [
+    ...trackers.map(options => {
+      const { pattern = (val: any) => true, transform = noop } = options
+
+      return (action: Action) => {
+        if (!pattern(action)) return
+
+        return transform(action)
+      }
+    }),
+    mainTracker.track
+  ]
+}
+
+export default function trackingMiddleware(trackers: Array<any>) {
   return () => (next: Function) => (action: Action) => {
-    // are we allowed to track this action?
-    if (!action.disableTracking) next(action)
-
-    const { handlers = {}, filter = filterRules } = config
-
-    const event = pipe(validateByTerm(filter), callHandlers(handlers))(action)
-
-    if (event) {
-      onTrack(event)
-    }
-
+    pipe(...combine(trackers))(action)
     return next(action)
   }
 }

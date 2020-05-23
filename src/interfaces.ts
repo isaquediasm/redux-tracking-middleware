@@ -12,3 +12,9 @@ export interface Action {
 export interface Handlers {
   [pattern: string]: Function
 }
+
+export interface Tracker {
+  track: Function
+  transform?: Function
+  pattern?: Function | String
+}

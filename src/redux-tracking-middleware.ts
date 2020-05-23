@@ -4,7 +4,7 @@ import { Action, Handlers, Tracker } from './interfaces'
 // ...
 
 export const noop = (val: any) => val
-
+export const booleanNoop = (val: any) => !!val
 const pipe = (...fns: Array<any>) => (x: any) => fns.reduce((v, f) => f(v), x)
 
 /**
@@ -46,12 +46,25 @@ export function createTracking(options: any) {
   return options
 }
 
+const getPattern = (pattern: any) => {
+  return typeof pattern === 'string'
+    ? (action: Action): boolean => !!action.type.match(new RegExp(pattern))
+    : pattern
+}
+
 function combine(trackers: Array<any>) {
   const mainTracker = trackers.find(item => !!item.track)
+  const trackFn = (...args: any) => {
+    if (args.filter(Boolean).length > 0) {
+      return mainTracker.track(...args)
+    }
+  }
 
   return [
     ...trackers.map(options => {
-      const { pattern = (val: any) => true, transform = noop } = options
+      const { transform = noop } = options
+
+      const pattern = getPattern(options?.pattern || booleanNoop)
 
       return (action: Action) => {
         if (!pattern(action)) return
@@ -59,7 +72,7 @@ function combine(trackers: Array<any>) {
         return transform(action)
       }
     }),
-    mainTracker.track
+    trackFn
   ]
 }
 

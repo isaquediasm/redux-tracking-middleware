@@ -8,7 +8,7 @@ Redux Tracking Middleware uses the power of middlewares to enable a simple and r
   - [Filtering event types](#filtering-event-types)
   - [Customising event types](#customising-event-types)
   - [Combining multiple trackers](#combining-multiple-trackers)
-  - [Usage with Redux Thunk](#usage-with-redux-thunk)
+  - [Accessing the redux state](#accessing-the-redux-state)
   - [API Specification](#api-specification)
     - [Settings object](#settings-object)
     - [trackingMiddleware(trackers)](#trackingmiddlewaretrackers)
@@ -152,13 +152,10 @@ const tracking = trackingMiddleware([userTracking, defaultTracking])
 const store = createStore(rootReducer, applyMiddleware(tracking))
 ```
 
-## Usage with Redux Thunk
-
-The Tracking Middleware can be even more powerful when used to Redux Thunk.
+## Accessing the redux state
 
 ```js
 import trackingMiddleware from 'redux-tracking-middleware'
-import thunk from 'redux-thunk'
 
 // catches the user information and add it to every action
 const getUser = {
@@ -182,21 +179,18 @@ const defaultTracking = {
 }
 
 const tracking = trackingMiddleware([getUser, defaultTracking])
-const store = createStore(rootReducer, applyMiddleware(thunk, tracking))
+const store = createStore(rootReducer, applyMiddleware(tracking))
 ```
-
-**Note that the thunk middleware has to be placed BEFORE the tracking, otherwise it will not work.**
 
 ## API Specification
 
 ### Settings object
 
-| Property  | Description                                                             | Type              | Default  |
-| --------- | ----------------------------------------------------------------------- | ----------------- | -------- |
-| pattern   | Determine which actions should be tracked                               | RegEx or Function | `*`      |
-| track     | Callback function called when action is finally tracked                 | Function          |
-| transform | Modify the action object before it reaches the `track` method           | Function          |
-| validate  | Validate the action. When returned false, the pipe will be interrupted. | Function          | Function |
+| Property  | Description                                                   | Type                       | Default |
+| --------- | ------------------------------------------------------------- | -------------------------- | ------- |
+| pattern   | Determine which actions should be tracked                     | RegEx or Function          | `*`     |
+| track     | Callback function called when action is finally tracked       | Function(action, getState) |
+| transform | Modify the action object before it reaches the `track` method | Function(action, getState) |
 
 ### trackingMiddleware(trackers)
 

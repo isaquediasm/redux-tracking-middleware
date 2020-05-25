@@ -1,5 +1,11 @@
 export const GENERIC_ACTION_TYPE = 'GENERIC_ACTION'
+export const FAILURE_ACTION_TYPE = 'FAILURE_ACTION'
+
 export const genericActionCreator = () => ({
   type: GENERIC_ACTION_TYPE,
   payload: 0
+})
+
+export const failureActionCreator = () => ({
+  type: FAILURE_ACTION_TYPE
 })

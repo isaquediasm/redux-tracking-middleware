@@ -1,7 +1,9 @@
+import { noop, booleanNoop, getPattern } from './../src/utils'
 import trackingMiddleware from '../src/redux-tracking-middleware'
 import {
   genericActionCreator,
   failureActionCreator,
+  loadingActionCreator,
   GENERIC_ACTION_TYPE
 } from './utils'
 import { createStore, applyMiddleware } from 'redux'
@@ -115,14 +117,68 @@ describe('Redux tracking middleware test', () => {
           }
         }
       },
-
+      {
+        pattern: `LOADING`,
+        transform: (action: any) => {
+          return {
+            ...action,
+            loading: true
+          }
+        }
+      },
+      {
+        pattern: `FAILURE`,
+        transform: (action: any) => {
+          return {
+            ...action,
+            failed: true
+          }
+        },
+        track: trackFailure
+      },
       { track }
     ])
 
     store.dispatch(failureActionCreator())
     store.dispatch(genericActionCreator())
+    store.dispatch(loadingActionCreator())
 
-    console.log(track.mock.calls)
-    console.log(trackFailure.mock.calls)
+    expect(track.mock.calls).toHaveLength(2)
+    expect(track.mock.calls[0][0]).toEqual({
+      ...genericActionCreator(),
+      custom: true
+    })
+
+    expect(track.mock.calls[1][0]).toEqual({
+      ...loadingActionCreator(),
+      loading: true
+    })
+
+    expect(trackFailure.mock.calls).toHaveLength(1)
+    expect(trackFailure.mock.calls[0][0]).toEqual({
+      ...failureActionCreator(),
+      failed: true
+    })
+  })
+})
+
+describe('utils tests', () => {
+  it('noop() should correctly return value', () => {
+    expect(noop(1)).toEqual(1)
+    expect(booleanNoop(1)).toBeTruthy()
+  })
+
+  it('getPattern() should correctly return a pattern checking fn', () => {
+    const fn = function fnPattern() {}
+    const fnPattern = getPattern(fn)
+    const regexPattern = getPattern(`TEST`)
+
+    // it should return the passed fn
+    expect(fnPattern).toBeInstanceOf(Function)
+    expect(fnPattern.name).toBe('fnPattern')
+
+    // it should return a fn wrapping a regex match
+    expect(regexPattern).toBeInstanceOf(Function)
+    expect(regexPattern({ type: 'TEST_ACTION' })).toBeTruthy()
   })
 })

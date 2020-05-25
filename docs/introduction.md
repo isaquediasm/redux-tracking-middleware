@@ -2,74 +2,52 @@
 
 ## Installation
 
-First, install the middleware.
-
 ```
-npm i redux-promise-middleware -s
+yarn add redux-tracking-middleware
 ```
 
 ## Setup
 
-Import the middleware and include it in `applyMiddleware` when creating the Redux store:
+Import the middleware, write your configurations and include it in `applyMiddleware` when creating a Redux Store:
 
 ```js
-import promise from 'redux-promise-middleware'
+import trackingMiddleware from 'redux-tracking-middleware'
+import mixpanel from 'mixpanel'
 
-composeStoreWithMiddleware = applyMiddleware(
-  promise,
-)(createStore)
+const defaultTracking = {
+  track: action => {
+    mixpanel.track(action.type, action.payload)
+  }
+}
+
+const tracking = trackingMiddleware(defaultTrack)
+const store = createStore(rootReducer, applyMiddleware(tracking))
 ```
 
 ## Use
 
-Dispatch a promise as the value of the `payload` property of the action.
+Dispatch an arbitrary action
 
 ```js
 const foo = () => ({
   type: 'FOO',
-  payload: new Promise()
-});
+  payload: { foo: 'bar' }
+})
 ```
 
-A pending action is immediately dispatched.
+A tracking event will be immedietly dispatched to the `track` fn.
 
 ```js
-{
-  type: 'FOO_PENDING'
+action => {
+  mixpanel.track(action.type, action.payload)
 }
 ```
-
-Once the promise is settled, a second action will be dispatched. If the promise is resolved a fulfilled action is dispatched.
-
-```js
-{
-  type: 'FOO_FULFILLED'
-  payload: {
-    ...
-  }
-}
-```
-
-On the other hand, if the promise is rejected, a rejected action is dispatched.
-
-```js
-{
-  type: 'FOO_REJECTED'
-  error: true,
-  payload: {
-    ...
-  }
-}
-```
-
-That's it!
 
 ## Further Reading
 
 - [Catching Errors Thrown by Rejected Promises](guides/rejected-promises.md)
-- [Use with Reducers](guides/reducers.md)
-- [Optimistic Updates](guides/optimistic-updates.md)
 - [Design Principles](guides/design-principles.md)
 
 ---
-Copyright (c) 2017 Patrick Burtchaell. [Code licensed with the MIT License (MIT)](/LICENSE). [Documentation licensed with the CC BY-NC License](LICENSE).
+
+Copyright (c) 2020 Isaque Dias. [Code licensed with the MIT License (MIT)](/LICENSE). [Documentation licensed with the CC BY-NC License](LICENSE).

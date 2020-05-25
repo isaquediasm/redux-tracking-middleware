@@ -192,12 +192,6 @@ const store = createStore(rootReducer, applyMiddleware(tracking))
 | track     | Callback function called when action is finally tracked       | Function(action, getState) |
 | transform | Modify the action object before it reaches the `track` method | Function(action, getState) |
 
-### trackingMiddleware(trackers)
-
-| Argument | Description                        | Type  | Default |
-| -------- | ---------------------------------- | ----- | ------- |
-| trackers | Methods to be included in the pipe | Array |
-
 ## Versioning
 
 To keep better organization of releases we follow the [Semantic Versioning 2.0.0](http://semver.org/) guidelines.

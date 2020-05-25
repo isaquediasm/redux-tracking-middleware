@@ -43,11 +43,4 @@ action => {
 }
 ```
 
-## Further Reading
-
-- [Catching Errors Thrown by Rejected Promises](guides/rejected-promises.md)
-- [Design Principles](guides/design-principles.md)
-
----
-
 Copyright (c) 2020 Isaque Dias. [Code licensed with the MIT License (MIT)](/LICENSE). [Documentation licensed with the CC BY-NC License](LICENSE).

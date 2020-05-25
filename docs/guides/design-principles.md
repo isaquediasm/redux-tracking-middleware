@@ -1,15 +1,17 @@
 # Design Principles
 
-## Promise Objects Are State Machines
+## Events as meaningful Actions
 
-A promise object is a "machine" holding one of two states:
+Events should be triggered by meaningful data actions rather than simple UI interactions. For example, consider a registration process described below:
 
-1. Pending
-2. Settled
+```
+1. User fills up form [UI Event]
+2. User clicks on Submit button [UI Event]
+3. Data is sent to API [Data Action]
+4. API returns a success or failure status [Data Action]
+```
 
-A settled state is the deffered result of the promise. This state will be either (a) rejected or (b) resolved. The rejected state throws an error and the fulfilled state returns either null or a value.
-
-See more: [ECMAScript 25.4 Spec: Promise Objects](https://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects).
+A successful registration can just be assumed by the stage 4, where the fetching promise is settled with the respective response, therefore is where the event trackig is supposed to be placed.
 
 ## Action Objects Describe State Changes to the Store
 
@@ -17,17 +19,6 @@ An action object describes changes to the store. Actions are the only source of 
 
 See more: [Redux Documentation](http://redux.js.org/docs/basics/Actions.html).
 
-## Asynchronous Action Objects Describe the Promise Object State
-
-Promise middleware dispatches "asynchronous" action objects describing the state of the promise:
-
-1. Pending action
-2. Fullfilled or rejcted action (settled)
-
-This affords asynchronous updates to the store.
-
-Another way of thinking of this is promise middleware abstracts the two states of an promise object to two action objects.
-
 ## Use Flux Standard Action (FSA)
 
-Promise middleware dispatches actions in compliance with [the Flux Standard Action](https://github.com/acdlite/flux-standard-action) reccommendations.
+For better results on your events semantics, comply with [the Flux Standard Action](https://github.com/acdlite/flux-standard-action) reccommendations.

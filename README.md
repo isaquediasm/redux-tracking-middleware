@@ -1,4 +1,4 @@
-# Redux tracking middleware [![Build Status](https://travis-ci.com/isaquediasm/redux-tracking-middleware.svg?branch=master)](https://travis-ci.com/isaquediasm/redux-tracking-middleware)
+# Redux tracking middleware [![Build Status](https://travis-ci.com/isaquediasm/redux-tracking-middleware.svg?branch=master)](https://travis-ci.com/isaquediasm/redux-tracking-middleware) [![Size Status](https://img.shields.io/bundlephobia/min/redux-tracking-middleware)](https://img.shields.io/bundlephobia/min/redux-tracking-middleware)
 
 Redux Tracking Middleware uses the power of middlewares to enable a simple and robust way to handle action/event tracking in your application.
 

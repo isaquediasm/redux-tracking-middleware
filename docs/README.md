@@ -11,5 +11,7 @@
 - [Customising Actions](guides/customising-actions.md)
 - [Accessing Redux State](guides/accessing-state.md)
 
-* [API Specification](upgrading/v6.md)
-* [Release History](https://github.com/isaquediasm/redux-tracking-middleware/releases)
+## Others
+
+- [API Specification](upgrading/v6.md)
+- [Release History](https://github.com/isaquediasm/redux-tracking-middleware/releases)

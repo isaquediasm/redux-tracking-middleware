@@ -2,7 +2,7 @@
 
 Handling actions dispatched by Redux promise middleware is simple by default.
 
-```js
+```javascript
 const FOO_TYPE = 'FOO';
 
 // Dispatch the action
@@ -36,15 +36,15 @@ const fooReducer = (state = {}, action) => {
 
 ### Action Types
 
-Optionally, the default promise suffixes can be imported from this module. 
+Optionally, the default promise suffixes can be imported from this module.
 
-```js
+```javascript
 import { ActionType } from 'redux-promise-middleware';
 ```
 
 This can be useful in your reducers to ensure types are more robust.
 
-```js
+```javascript
 const FOO_PENDING = `FOO_${ActionType.Pending}`;
 const FOO_FULFILLED = `FOO_${ActionType.Fulfilled}`;
 const FOO_REJECTED = `FOO_${ActionType.Rejected}`;
@@ -56,7 +56,7 @@ In a large application with many async actions, having many reducers with this s
 
 To keep your reducers [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), you might see value in using a solution like [type-to-reducer](https://github.com/tomatau/type-to-reducer).
 
-```js
+```javascript
 import typeToReducer from 'type-to-reducer';
 
 const BAR_TYPE = 'BAR';
@@ -69,7 +69,6 @@ const barActionCreator = () => ({
 
 // Handle the action
 const barReducer = typeToReducer({
-  [BAR_TYPE]: {
     PENDING: () => ({
       // ...
     }),
@@ -84,3 +83,4 @@ const barReducer = typeToReducer({
   }
 }, {});
 ```
+

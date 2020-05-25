@@ -2,7 +2,7 @@
 
 ## Implicitly
 
-```js
+```javascript
 const foo = () => ({
   type: 'FOO',
   payload: new Promise()
@@ -11,7 +11,7 @@ const foo = () => ({
 
 ## Explicitly
 
-```js
+```javascript
 const foo = () => ({
   type: 'FOO',
   payload: {
@@ -24,7 +24,7 @@ const foo = () => ({
 
 For more on using async/await, [see the guide](async-await.md).
 
-```js
+```javascript
 const foo = () => ({
   type: 'FOO',
   async payload() {
@@ -34,3 +34,4 @@ const foo = () => ({
   }
 });
 ```
+

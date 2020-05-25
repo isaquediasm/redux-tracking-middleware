@@ -12,6 +12,4 @@
 - [Accessing Redux State](guides/accessing-state.md)
 
 * [API Specification](upgrading/v6.md)
-* [Upgrade from 4.x to 5.0.0](upgrading/v5.md)
-* [Upgrade from 3.x to 4.0.0](upgrading/v4.md)
-* [Release History](https://github.com/pburtchaell/redux-promise-middleware/releases)
+* [Release History](https://github.com/isaquediasm/redux-tracking-middleware/releases)

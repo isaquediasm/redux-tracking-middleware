@@ -2,7 +2,7 @@
 
 If a promise is resolved with a `null` or `undefined` value, the fullfilled action will not include a payload property. This is because actions describe changes in state. Consider the following two actions:
 
-```text
+```
 // A
 {
  type: 'ACTION`,
@@ -18,4 +18,3 @@ If a promise is resolved with a `null` or `undefined` value, the fullfilled acti
 ```
 
 Both actions describe the same change in state. This is why, when you resolve with `null` or `undefined`, the payload property is not included. It would be redundant to include it.
-

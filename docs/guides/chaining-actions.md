@@ -2,11 +2,12 @@
 
 When a promise is resolved, one might want to dispatch additional actions in response. One example could be changing the route after a user is successfully signed in. Another could be showing an error message after a request fails.
 
-First, note this behavior uses thunks. You will need to include [Redux Thunk](https://github.com/gaearon/redux-thunk) in your middleware stack.
+First, note this behavior uses thunks. You will need to include [Redux Thunk](https://github.com/gaearon/redux-thunk) in your middleware stack. 
 
-_Note: Redux Thunk is a middleware that enables action creators to return a function instead of an object \(_[_hence the name "thunk"_](https://en.wikipedia.org/wiki/Thunk)_\). The returned function is called with a `dispatch` argument, which is what you can use to chain actions._
+*Note: Redux Thunk is a middleware that enables action creators to return a function instead of an object ([hence the name "thunk"](https://en.wikipedia.org/wiki/Thunk)). The returned function is called with a `dispatch` argument, which is what you can use to chain actions.*
 
-```javascript
+
+```js
 const foo = () => {
   return dispatch => {
 
@@ -20,7 +21,7 @@ const foo = () => {
 
 If you need to chain several actions, using `Promise.all` is suggested.
 
-```javascript
+```js
 const foo = () => {
   return dispatch => {
 
@@ -35,9 +36,9 @@ const foo = () => {
 }
 ```
 
-When handling a promise with `then`, the parameter is an object with two properties: \(1\) the "value" \(if the promise is fulfilled\) or the "reason" \(if the promise is rejected\) and \(2\) the object of the dispatched action.
+When handling a promise with `then`, the parameter is an object with two properties: (1) the "value" (if the promise is fulfilled) or the "reason" (if the promise is rejected) and (2) the object of the dispatched action.
 
-```javascript
+```js
 // fulfilled promise
 const foo = () => {
   return dispatch => {
@@ -73,7 +74,7 @@ const bar = () => {
 
 Rejected promises can also be handled with `.catch()`.
 
-```javascript
+```js
 // rejected promise with throw
 const baz = () => {
   return dispatch => {
@@ -89,4 +90,3 @@ const baz = () => {
   };
 }
 ```
-

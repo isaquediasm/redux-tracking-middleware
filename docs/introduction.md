@@ -4,7 +4,7 @@
 
 First, install the middleware.
 
-```text
+```
 npm i redux-promise-middleware -s
 ```
 
@@ -12,7 +12,7 @@ npm i redux-promise-middleware -s
 
 Import the middleware and include it in `applyMiddleware` when creating the Redux store:
 
-```javascript
+```js
 import promise from 'redux-promise-middleware'
 
 composeStoreWithMiddleware = applyMiddleware(
@@ -24,7 +24,7 @@ composeStoreWithMiddleware = applyMiddleware(
 
 Dispatch a promise as the value of the `payload` property of the action.
 
-```javascript
+```js
 const foo = () => ({
   type: 'FOO',
   payload: new Promise()
@@ -33,7 +33,7 @@ const foo = () => ({
 
 A pending action is immediately dispatched.
 
-```javascript
+```js
 {
   type: 'FOO_PENDING'
 }
@@ -41,7 +41,7 @@ A pending action is immediately dispatched.
 
 Once the promise is settled, a second action will be dispatched. If the promise is resolved a fulfilled action is dispatched.
 
-```javascript
+```js
 {
   type: 'FOO_FULFILLED'
   payload: {
@@ -52,7 +52,7 @@ Once the promise is settled, a second action will be dispatched. If the promise 
 
 On the other hand, if the promise is rejected, a rejected action is dispatched.
 
-```javascript
+```js
 {
   type: 'FOO_REJECTED'
   error: true,
@@ -66,10 +66,10 @@ That's it!
 
 ## Further Reading
 
-* [Catching Errors Thrown by Rejected Promises](isaquediasm-redux-tracking-middleware-1/rejected-promises.md)
-* [Use with Reducers](isaquediasm-redux-tracking-middleware-1/reducers.md)
-* [Optimistic Updates](isaquediasm-redux-tracking-middleware-1/optimistic-updates.md)
-* [Design Principles](isaquediasm-redux-tracking-middleware-1/design-principles.md)
+- [Catching Errors Thrown by Rejected Promises](guides/rejected-promises.md)
+- [Use with Reducers](guides/reducers.md)
+- [Optimistic Updates](guides/optimistic-updates.md)
+- [Design Principles](guides/design-principles.md)
 
-Copyright \(c\) 2017 Patrick Burtchaell. [Code licensed with the MIT License \(MIT\)](https://github.com/isaquediasm/redux-tracking-middleware/tree/70a8b8cc90993b55b3a946450a3ca5b5b06512c7/LICENSE/README.md). [Documentation licensed with the CC BY-NC License](https://github.com/isaquediasm/redux-tracking-middleware/tree/70a8b8cc90993b55b3a946450a3ca5b5b06512c7/docs/LICENSE/README.md).
-
+---
+Copyright (c) 2017 Patrick Burtchaell. [Code licensed with the MIT License (MIT)](/LICENSE). [Documentation licensed with the CC BY-NC License](LICENSE).

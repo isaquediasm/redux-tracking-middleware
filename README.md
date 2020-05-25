@@ -41,7 +41,7 @@ To keep better organization of releases we follow the [Semantic Versioning 2.0.0
 
 ## Contributing
 
-Want to contribute? [Follow these recommendations](https://github.com/isaquediasm/redux-tracking-middleware/blob/master/CONTRIBUTING.md).
+Want to contribute? [Follow these recommendations](https://github.com/isaquediasm/redux-tracking-middleware/blob/master/docs/contributing.md).
 
 ## History
 

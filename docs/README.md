@@ -13,5 +13,6 @@
 
 ## Others
 
-- [API Specification](upgrading/v6.md)
+- [API Specification](api-specification.md)
+- [Contributing](contributing.md)
 - [Release History](https://github.com/isaquediasm/redux-tracking-middleware/releases)

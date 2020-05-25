@@ -2,21 +2,6 @@
 
 Redux Tracking Middleware uses the power of middlewares to enable a simple and robust way to handle action/event tracking in your application.
 
-- [Redux tracking middleware ![Build Status](https://travis-ci.com/isaquediasm/redux-tracking-middleware)](#redux-tracking-middleware-img-srchttpstravis-cicomisaquediasmredux-tracking-middlewaresvgbranchmaster-altbuild-status)
-  - [Instalation](#instalation)
-  - [Setup](#setup)
-  - [Filtering event types](#filtering-event-types)
-  - [Customising event types](#customising-event-types)
-  - [Combining multiple trackers](#combining-multiple-trackers)
-  - [Accessing the redux state](#accessing-the-redux-state)
-  - [API Specification](#api-specification)
-    - [Settings object](#settings-object)
-    - [trackingMiddleware(trackers)](#trackingmiddlewaretrackers)
-  - [Versioning](#versioning)
-  - [Contributing](#contributing)
-  - [History](#history)
-  - [License](#license)
-
 ## Instalation
 
 ```

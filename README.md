@@ -4,6 +4,14 @@ Redux Tracking Middleware uses the power of middlewares to enable a simple and r
 
 https://isaquediasm.gitbook.io/tracking-middleware/
 
+## Motivation
+
+UI Interactions don't often provide enough insights about our application usage. This library allows you to track your meaningful Redux actions, which is specially useful for async actions tracking, such as signup or checkout.
+
+**Disclamer:** It's not the purpose of this library to cover all the tracking edge cases. You might still need to manually track UI events based on your own needs and use cases.
+
+Read more about the [Design Principles](https://isaquediasm.gitbook.io/tracking-middleware/getting-started/design-principles)
+
 ## Instalation
 
 ```

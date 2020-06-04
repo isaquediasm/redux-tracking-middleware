@@ -41,7 +41,6 @@ const store = createStore(rootReducer, applyMiddleware(tracking))
 - [Official Documentation](https://isaquediasm.gitbook.io/tracking-middleware/)
 - [Introduction](https://isaquediasm.gitbook.io/tracking-middleware/getting-started/introduction)
 - [Guides](https://isaquediasm.gitbook.io/tracking-middleware/guides/filtering-types)
-- [Examples](/examples)
 
 ## Versioning
 

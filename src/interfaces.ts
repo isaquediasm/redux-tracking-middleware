@@ -17,4 +17,5 @@ export interface Tracker {
   track: Function
   transform?: Function
   pattern?: Function | String
+  filter?: Function
 }

@@ -6,22 +6,35 @@ export default function trackingMiddleware(trackers: Array<Tracker> | Tracker) {
     let transformedAction = action
 
     for (let tracker of [trackers].flat()) {
-      let { transform = noop } = tracker
-      let pattern = getPattern(tracker?.pattern || booleanNoop)
+      const { transform = noop } = tracker
 
-      if (pattern(transformedAction)) {
-        const eventValue = transform(transformedAction, getState)
+      if (tracker?.filter && !tracker.filter(transformedAction)) {
+        break
+      }
+
+      // checks if the provided pattern is a regex or a fn
+      const pattern = getPattern(tracker?.pattern || booleanNoop)
+
+      // checks if the current action matches the given pattern
+      if (tracker.pattern && pattern(transformedAction)) {
+        transformedAction = transform(transformedAction, getState)
 
         if (tracker?.track) {
-          tracker.track(eventValue, getState)
+          tracker.track(transformedAction, getState)
+
+          // break the loop whenever a track method is found
           break
         }
+      }
 
-        transformedAction = eventValue
+      if (!tracker.pattern && tracker?.track) {
+        tracker.track(transformedAction, getState)
+
+        // break the loop whenever a track method is found
+        break
       }
     }
 
-    // pipe(...combine([trackers], getState))({ action, track: null })
     return next(action)
   }
 }

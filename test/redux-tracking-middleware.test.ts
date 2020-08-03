@@ -101,7 +101,7 @@ describe('Redux tracking middleware test', () => {
     store.dispatch(genericActionCreator())
     store.dispatch(failureActionCreator())
 
-    expect(track.mock.calls.length).toBe(2)
+    expect(track.mock.calls.length).toBe(1)
     expect(track.mock.calls[0][0].custom).toBeTruthy()
 
     // should work for rules spreaded in different trackers
@@ -130,8 +130,8 @@ describe('Redux tracking middleware test', () => {
 
     const storeWithSplittedTrackers = configureStore([
       { filter: (action: any) => !action.type.includes(`FAILURE`) },
-      { pattern: `GENERIC` },
       {
+        pattern: `GENERIC`,
         transform: (action: any, getState: Function) => {
           return {
             ...action,
@@ -165,11 +165,12 @@ describe('Redux tracking middleware test', () => {
       GENERIC_ACTION_TYPE
     )
 
+    console.log(trackSplittedTrackers.mock.calls)
     // checks if transforming worked
     expect(trackSplittedTrackers.mock.calls[0][0].custom).toBeTruthy()
   })
 
-  it.only('should correcty combine multiple trackers', () => {
+  it('should correcty combine multiple trackers', () => {
     const track = jest.fn()
     const trackFailure = jest.fn()
     const store = configureStore([
@@ -208,8 +209,6 @@ describe('Redux tracking middleware test', () => {
     store.dispatch(genericActionCreator())
     store.dispatch(loadingActionCreator())
 
-    console.log(track.mock.calls)
-    console.log(trackFailure.mock.calls)
     expect(track.mock.calls).toHaveLength(2)
     expect(track.mock.calls[0][0]).toEqual({
       ...genericActionCreator(),

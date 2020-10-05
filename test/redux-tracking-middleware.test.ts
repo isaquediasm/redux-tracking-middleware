@@ -7,6 +7,40 @@ import {
   GENERIC_ACTION_TYPE
 } from './utils'
 import { createStore, applyMiddleware } from 'redux'
+
+class StorageDrive {
+  store: {
+    [key: string]: any
+  }
+
+  constructor() {
+    this.store = {}
+  }
+
+  clear() {
+    this.store = {}
+  }
+
+  getItem(key: string) {
+    return this.store[key.toString()] || null
+  }
+
+  setItem(key: string, value: any) {
+    this.store = {
+      ...this.store,
+      [key]: value.toString()
+    }
+  }
+
+  removeItem(key: string) {
+    delete this.store[key.toString()]
+  }
+}
+
+Object.defineProperty(window, 'localStorage', {
+  value: new StorageDrive()
+})
+
 const initialState = { genericState: true }
 const rootReducer = (state = initialState, action: any) => {
   switch (action.type) {
@@ -16,9 +50,11 @@ const rootReducer = (state = initialState, action: any) => {
 }
 
 function configureStore(config: any) {
+  const tracking = trackingMiddleware(config)
+
   const mockStore = createStore(
     rootReducer,
-    applyMiddleware(trackingMiddleware(config))
+    applyMiddleware(tracking.reduxMiddleware)
   )
 
   return mockStore
@@ -34,8 +70,6 @@ describe('Redux tracking middleware test', () => {
 
     // first arg should be the action
     expect(track.mock.calls[0][0]).toEqual(genericActionCreator())
-    // second arg should be the getState method
-    expect(track.mock.calls[0][1].name).toEqual('getState')
   })
 
   it('should corretly call track fn with getState', () => {
@@ -45,9 +79,8 @@ describe('Redux tracking middleware test', () => {
     })
     store.dispatch(genericActionCreator())
 
-    // second arg should be the getState method
-    expect(track.mock.calls[0][1].name).toEqual('getState')
-    expect(track.mock.calls[0][1]()).toEqual(initialState)
+    // second arg should be the state object
+    expect(track.mock.calls[0][1]).toEqual(initialState)
   })
 
   it('should correctly filter out specifc events and keep the rest', () => {
@@ -73,7 +106,7 @@ describe('Redux tracking middleware test', () => {
 
     const store = configureStore({
       pattern: `GENERIC`,
-      transform: (action: any, getState: Function) => {
+      transform: (action: any, state: any) => {
         return {
           ...action,
           custom: true
@@ -85,12 +118,19 @@ describe('Redux tracking middleware test', () => {
     const storeWithSplittedTrackers = configureStore([
       {
         pattern: `GENERIC`,
-        transform: (action: any, getState: Function) => {
+        transform: (action: any, state: any) => {
           return {
             ...action,
             custom: true
           }
         }
+      },
+      {
+        pattern: `FAILURE`,
+        transform: (action: any) => ({
+          ...action,
+          customFailure: true
+        })
       },
       {
         track: trackSplittedTrackers
@@ -110,6 +150,7 @@ describe('Redux tracking middleware test', () => {
 
     expect(trackSplittedTrackers.mock.calls.length).toBe(2)
     expect(trackSplittedTrackers.mock.calls[0][0].custom).toBeTruthy()
+    expect(trackSplittedTrackers.mock.calls[1][0].customFailure).toBeTruthy()
   })
 
   it('should correctly combine filter, pattern, transform and track in same tracker', () => {
@@ -119,7 +160,7 @@ describe('Redux tracking middleware test', () => {
     const store = configureStore({
       filter: (action: any) => !action.type.includes(`FAILURE`),
       pattern: `GENERIC`,
-      transform: (action: any, getState: Function) => {
+      transform: (action: any, state: any) => {
         return {
           ...action,
           custom: true
@@ -132,7 +173,7 @@ describe('Redux tracking middleware test', () => {
       { filter: (action: any) => !action.type.includes(`FAILURE`) },
       {
         pattern: `GENERIC`,
-        transform: (action: any, getState: Function) => {
+        transform: (action: any, state: any) => {
           return {
             ...action,
             custom: true

@@ -19,3 +19,21 @@ export interface Tracker {
   pattern?: Function | String
   filter?: Function
 }
+
+export interface TrackingService {
+  reduxMiddleware(getState: any): (next: Function) => (action: Action) => any
+}
+
+export interface StateStorage {
+  save: Function
+  get: Function
+}
+
+export interface StorageDrive {
+  setItem: Function
+  getItem: Function
+  length?: Number
+  clear?: Function
+  key?(index: number): string | null
+  removeItem?: Function
+}

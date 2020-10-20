@@ -1,4 +1,5 @@
-import { Action } from './interfaces'
+import { Storage } from './storage'
+import { Action } from '../interfaces'
 
 export const noop = (val: any) => val
 export const booleanNoop = (val: any) => !!val
@@ -14,4 +15,12 @@ export function getPattern(pattern: any) {
   return typeof pattern === 'string'
     ? (action: Action): boolean => !!action.type.match(new RegExp(pattern))
     : pattern
+}
+
+export function createContext() {
+  return new Storage('context')
+}
+
+export function createState() {
+  return new Storage('state')
 }

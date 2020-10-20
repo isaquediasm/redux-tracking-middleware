@@ -1,91 +1,38 @@
-import { getPattern, booleanNoop, noop } from './utils'
+import { Storage } from './helpers/storage'
 import {
-  Action,
-  Handlers,
-  Tracker,
-  TrackingService,
-  StateStorage,
-  StorageDrive
-} from './interfaces'
-
-function findAvailableStorage() {
-  return localStorage
-}
-
-declare global {
-  interface Window {
-    __tracking: any
-  }
-}
-
-const prefix = '__tracking'
-class Storage {
-  storage: StorageDrive
-  key: string
-
-  constructor(key: string, storage: StorageDrive = findAvailableStorage()) {
-    console.log('##drive', localStorage)
-    this.storage = storage
-    this.key = `${prefix}-${key}`
-  }
-
-  save(value: any) {
-    this.storage.setItem(this.key, JSON.stringify(value))
-  }
-
-  get() {
-    const val = this.storage.getItem(this.key)
-
-    return val ? JSON.parse(val) : null
-  }
-}
-
-const State = new Storage('state')
-const Context = new Storage('context')
-
-export function setContext(args: Function | Object) {
-  const currContext = Context.get()
-  const newContext = typeof args === 'function' ? args(currContext) : args
-  Context.save(newContext)
-}
-
-export function setAppState(args: Function | Object) {
-  const currContext = State.get()
-  const newContext = typeof args === 'function' ? args(currContext) : args
-  Context.save(newContext)
-}
-
-export function setRouteContext(args: Function | Object) {
-  return setContext((curr: Object) => ({ ...curr, route: args }))
-}
-
-export function useTracking() {
-  return {
-    setContext,
-    setAppState,
-    setRouteContext
-  }
-}
+  getPattern,
+  booleanNoop,
+  noop,
+  createContext,
+  createState
+} from './helpers/utils'
+import { Action, Tracker, TrackingService, RouteEvent } from './interfaces'
 
 export function trackingPipeline(trackers: Array<Tracker> | Tracker) {
   return (state: any, action: Action) => {
-    let transformedAction = action
+    const Context = createContext()
 
+    let transformedAction = action
+    const context = Context.get()
+
+    // stores the current application state
     setAppState(state)
 
     for (let tracker of [trackers].flat()) {
       const { transform = noop } = tracker
-
-      if (tracker?.filter && !tracker.filter(transformedAction)) {
-        break
-      }
+      const eventArgs = [transformedAction, { state, context }]
 
       // checks if the provided pattern is a regex or a fn
       const pattern = getPattern(tracker?.pattern || booleanNoop)
+      const filter = getPattern(tracker?.filter || booleanNoop)
+
+      if (tracker.filter && !filter(transformedAction)) {
+        break
+      }
 
       // checks if the current action matches the given pattern
       if (tracker.pattern && pattern(transformedAction)) {
-        transformedAction = transform(transformedAction, state)
+        transformedAction = transform(...eventArgs)
 
         if (tracker?.track) {
           tracker.track(transformedAction, state)
@@ -96,7 +43,7 @@ export function trackingPipeline(trackers: Array<Tracker> | Tracker) {
       }
 
       if (!tracker.pattern && tracker?.track) {
-        tracker.track(transformedAction, state)
+        tracker.track(...eventArgs)
 
         // break the loop whenever a track method is found
         break
@@ -112,7 +59,8 @@ export function reduxMiddleware(sendToPipeline: Function) {
   }
 }
 
-export function track(type: string, payload: any) {
+export function track(type: string, payload: Object = {}) {
+  const State = createState()
   const dispatchEvent = trackingPipeline(window.__tracking.trackers)
   const state = State.get()
   const action = { type, payload }
@@ -128,5 +76,48 @@ export default function trackingMiddleware(
 
   return {
     reduxMiddleware: reduxMiddleware(sendToPipeline)
+  }
+}
+
+export function setContext(args: Function | Object) {
+  const Context = createContext()
+  const currContext = Context.get()
+  const newContext = typeof args === 'function' ? args(currContext) : args
+  Context.save(newContext)
+}
+
+export function getContext() {
+  const Context = createContext()
+  const currContext = Context.get()
+
+  return currContext
+}
+
+export function setAppState(args: Function | Object) {
+  const State = createState()
+  const currState = State.get()
+  const newState = typeof args === 'function' ? args(currState) : args
+  State.save(newState)
+}
+
+export function getAppState() {
+  const State = createState()
+  const currState = State.get()
+  return currState
+}
+
+export function setRouteContext(payload: Object) {
+  // track(`${payload.pageName}/LOAD`, payload)
+
+  return setContext((curr: Object) => ({ ...curr, route: payload }))
+}
+
+export function useTracking() {
+  return {
+    setContext,
+    getContext,
+    setAppState,
+    getAppState,
+    setRouteContext
   }
 }

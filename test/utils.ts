@@ -4,7 +4,7 @@ export const LOADING_ACTION_TYPE = 'LOADING_ACTION'
 
 export const genericActionCreator = () => ({
   type: GENERIC_ACTION_TYPE,
-  payload: 0
+  payload: {}
 })
 
 export const failureActionCreator = () => ({

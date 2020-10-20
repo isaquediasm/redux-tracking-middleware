@@ -5,6 +5,7 @@ export interface Config {
 
 export interface Action {
   type: String
+  payload?: any
   disableTracking?: boolean
   defineTracking?: Object
 }
@@ -36,4 +37,8 @@ export interface StorageDrive {
   clear?: Function
   key?(index: number): string | null
   removeItem?: Function
+}
+
+export interface RouteEvent {
+  pageName?: string
 }

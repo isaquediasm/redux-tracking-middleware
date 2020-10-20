@@ -1,5 +1,14 @@
-import { noop, booleanNoop, getPattern } from './../src/utils'
-import trackingMiddleware from '../src/redux-tracking-middleware'
+import { Storage } from './../src/helpers/storage'
+import { noop, booleanNoop, getPattern } from './../src/helpers/utils'
+import trackingMiddleware, {
+  useTracking,
+  track,
+  setRouteContext,
+  setContext,
+  getContext,
+  setAppState,
+  getAppState
+} from '../src/redux-tracking-middleware'
 import {
   genericActionCreator,
   failureActionCreator,
@@ -41,6 +50,7 @@ Object.defineProperty(window, 'localStorage', {
   value: new StorageDrive()
 })
 
+const genericObj = { foo: 'bar' }
 const initialState = { genericState: true }
 const rootReducer = (state = initialState, action: any) => {
   switch (action.type) {
@@ -59,6 +69,18 @@ function configureStore(config: any) {
 
   return mockStore
 }
+
+describe('global tracking middleware test', () => {
+  it('should track event', () => {
+    const trackFn = jest.fn()
+    configureStore({ track: trackFn })
+
+    track(GENERIC_ACTION_TYPE)
+
+    expect(trackFn.mock.calls[0][0]).toEqual(genericActionCreator())
+    expect(trackFn.mock.calls[0][1]).toEqual({ state: null, context: null })
+  })
+})
 
 describe('Redux tracking middleware test', () => {
   it('should correctly call track fn with containing action  ', () => {
@@ -80,7 +102,10 @@ describe('Redux tracking middleware test', () => {
     store.dispatch(genericActionCreator())
 
     // second arg should be the state object
-    expect(track.mock.calls[0][1]).toEqual(initialState)
+    expect(track.mock.calls[0][1]).toEqual({
+      state: initialState,
+      context: null
+    })
   })
 
   it('should correctly filter out specifc events and keep the rest', () => {
@@ -269,6 +294,25 @@ describe('Redux tracking middleware test', () => {
   })
 })
 
+describe('useTracking()', () => {
+  it('setContext() should store the given value', () => {
+    setContext(genericObj)
+    expect(getContext()).toEqual(genericObj)
+  })
+
+  it('setAppState() should store the given value ', () => {
+    setAppState(genericObj)
+    expect(getAppState()).toEqual(genericObj)
+  })
+
+  it('setRouteContext() should add the current route to the context', () => {
+    const route = { page: 'x' }
+    setContext(genericObj)
+    setRouteContext(route)
+    expect(getContext()).toEqual({ ...genericObj, route })
+  })
+})
+
 describe('utils tests', () => {
   it('noop() should correctly return value', () => {
     expect(noop(1)).toEqual(1)
@@ -287,5 +331,13 @@ describe('utils tests', () => {
     // it should return a fn wrapping a regex match
     expect(regexPattern).toBeInstanceOf(Function)
     expect(regexPattern({ type: 'TEST_ACTION' })).toBeTruthy()
+  })
+
+  it('storage() should correctly save and load data', () => {
+    const State = new Storage('storage')
+
+    State.save(genericObj)
+
+    expect(State.get()).toEqual(genericObj)
   })
 })

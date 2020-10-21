@@ -20,7 +20,7 @@ export function trackingPipeline(trackers: Array<Tracker> | Tracker) {
 
     for (let tracker of [trackers].flat()) {
       const { transform = noop } = tracker
-      const eventArgs = [transformedAction, { state, context }]
+      const getEventArgs = () => [transformedAction, { state, context }]
 
       // checks if the provided pattern is a regex or a fn
       const pattern = getPattern(tracker?.pattern || booleanNoop)
@@ -32,10 +32,10 @@ export function trackingPipeline(trackers: Array<Tracker> | Tracker) {
 
       // checks if the current action matches the given pattern
       if (tracker.pattern && pattern(transformedAction)) {
-        transformedAction = transform(...eventArgs)
+        transformedAction = transform(...getEventArgs())
 
         if (tracker?.track) {
-          tracker.track(transformedAction, state)
+          tracker.track(...getEventArgs())
 
           // break the loop whenever a track method is found
           break
@@ -43,7 +43,9 @@ export function trackingPipeline(trackers: Array<Tracker> | Tracker) {
       }
 
       if (!tracker.pattern && tracker?.track) {
-        tracker.track(...eventArgs)
+        transformedAction = transform(...getEventArgs())
+
+        tracker.track(...getEventArgs())
 
         // break the loop whenever a track method is found
         break

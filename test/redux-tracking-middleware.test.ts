@@ -268,22 +268,33 @@ describe('Redux tracking middleware test', () => {
         },
         track: trackFailure
       },
-      { track }
+      {
+        transform: (action: any) => {
+          return {
+            ...action,
+            tracked: true
+          }
+        },
+        track
+      }
     ])
 
     store.dispatch(failureActionCreator())
     store.dispatch(genericActionCreator())
     store.dispatch(loadingActionCreator())
 
+    console.log(track.mock.calls)
     expect(track.mock.calls).toHaveLength(2)
     expect(track.mock.calls[0][0]).toEqual({
       ...genericActionCreator(),
-      custom: true
+      custom: true,
+      tracked: true
     })
 
     expect(track.mock.calls[1][0]).toEqual({
       ...loadingActionCreator(),
-      loading: true
+      loading: true,
+      tracked: true
     })
 
     expect(trackFailure.mock.calls).toHaveLength(1)

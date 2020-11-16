@@ -21,7 +21,10 @@ const defaultTracking = {
 }
 
 const tracking = trackingMiddleware(defaultTrack)
-const store = createStore(rootReducer, applyMiddleware(tracking))
+const store = createStore(
+  rootReducer,
+  applyMiddleware(tracking.reduxMiddleware)
+)
 ```
 
 ## Use

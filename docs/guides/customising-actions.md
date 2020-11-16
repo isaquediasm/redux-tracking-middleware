@@ -35,5 +35,8 @@ const userTracking = {
 }
 
 const tracking = trackingMiddleware(userTracking)
-const store = createStore(rootReducer, applyMiddleware(tracking))
+const store = createStore(
+  rootReducer,
+  applyMiddleware(tracking.reduxMiddleware)
+)
 ```

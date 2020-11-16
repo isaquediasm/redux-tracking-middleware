@@ -5,8 +5,8 @@ import trackingMiddleware from 'redux-tracking-middleware'
 
 // catches the user information and add it to every action
 const getUser = {
-  transform: (action, getState) => {
-    const user = getState().userReducer.user
+  transform: (action, { state }) => {
+    const user = state.userReducer.user
 
     return {
       ...action,
@@ -25,5 +25,8 @@ const defaultTracking = {
 }
 
 const tracking = trackingMiddleware([getUser, defaultTracking])
-const store = createStore(rootReducer, applyMiddleware(tracking))
+const store = createStore(
+  rootReducer,
+  applyMiddleware(tracking.reduxMiddleware)
+)
 ```

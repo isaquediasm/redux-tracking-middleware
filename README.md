@@ -44,6 +44,7 @@ const store = createStore(
 - [Official Documentation](https://isaquediasm.gitbook.io/tracking-middleware/)
 - [Introduction](https://isaquediasm.gitbook.io/tracking-middleware/getting-started/introduction)
 - [Guides](https://isaquediasm.gitbook.io/tracking-middleware/guides/filtering-types)
+- [Usage outside of Redux](https://isaquediasm.gitbook.io/tracking-middleware/guides/without-redux)
 
 ## Versioning
 
